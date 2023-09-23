@@ -123,10 +123,11 @@ public class battleManagerScript : MonoBehaviour
         //使攻击命中后飘出伤害数字
         while (battleStatus)      //当处于战斗状态时
         {
-            
-            StartCoroutine(CSS.camShake(.2f,unit.GetComponent<UnitScript>().attackDamage,getDirection(unit,enemy))); //用协程来启动相机震动
+
+            StartCoroutine(CSS.camShake(.2f, unit.GetComponent<UnitScript>().attackDamage, getDirection(unit, enemy))); //用协程来启动相机震动
+
             //当双方都在互相的攻击范围内，且双方的攻击都没击杀对面的时候，就是双方互相攻击时
-            if(unit.GetComponent<UnitScript>().attackRange == enemy.GetComponent<UnitScript>().attackRange && enemy.GetComponent<UnitScript>().currentHealthPoints - unit.GetComponent<UnitScript>().attackDamage > 0)
+            if (unit.GetComponent<UnitScript>().attackRange == enemy.GetComponent<UnitScript>().attackRange && enemy.GetComponent<UnitScript>().currentHealthPoints - unit.GetComponent<UnitScript>().attackDamage > 0)
             {
                 StartCoroutine(unit.GetComponent<UnitScript>().displayDamageEnum(enemy.GetComponent<UnitScript>().attackDamage)); //飘出敌方受到的伤害
                 StartCoroutine(enemy.GetComponent<UnitScript>().displayDamageEnum(unit.GetComponent<UnitScript>().attackDamage)); //飘出我方受到的伤害

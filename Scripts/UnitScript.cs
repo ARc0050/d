@@ -52,7 +52,7 @@ public class UnitScript : MonoBehaviour
 
     public tileMapScript map;
 
-    //更新位置
+    //更新位置需要用到的出发点和终点
     public Transform startPoint;
     public Transform endPoint;
     public float moveSpeedTime = 1f;
@@ -64,7 +64,7 @@ public class UnitScript : MonoBehaviour
     // 总计距离
     private float journeyLength;
 
-    //开始移动的布尔值？
+    //确认单位是否在移动的bool
     public bool unitInMovement;
 
 
@@ -124,7 +124,7 @@ public class UnitScript : MonoBehaviour
      }
 
    
-    public void moveAgain()//可移动
+    public void moveAgain()//到该玩家的回合后再次行动
     {
         
         path = null;//将路径定义为空
@@ -181,7 +181,7 @@ public class UnitScript : MonoBehaviour
         healthBar.fillAmount = (float)currentHealthPoints / maxHealthPoints;
         hitPointsText.SetText(currentHealthPoints.ToString());
     }
-    public void dealDamage(int x)
+    public void dealDamage(int x)//造成伤害的函数
     {
         currentHealthPoints = currentHealthPoints - x;
         updateHealthUI();
