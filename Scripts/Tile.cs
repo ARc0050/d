@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 [System.Serializable]
-public class Tile
+public class Tile//定义格子的类型并赋予属性
 {
 
-    public string name;
-    public GameObject tileVisualPrefab;
-    public GameObject unitOnTile;
-    public float movementCost = 1;
-    public bool isWalkable=true;
+    public string name;//名称
+    public GameObject tileVisualPrefab;//tile的预制体
+    public GameObject unitOnTile;//格子上的单位
+    public float movementCost = 1;//移动消耗
+    public bool isWalkable=true;//是否可移动
     
     /*
     private int x;
