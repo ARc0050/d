@@ -68,15 +68,8 @@ public class UnitScript : MonoBehaviour
     public bool unitInMovement;
 
 
-    //单位的状态类型
-    public enum movementStates
-    {
-        Unselected,
-        Selected,
-        Moved,
-        Wait
-    }
-    public movementStates unitMoveState;
+    
+    public movementStates unitMoveState;//单位的状态类型
    
     //寻路
 
@@ -131,7 +124,7 @@ public class UnitScript : MonoBehaviour
         setMovementState(0);//将单位初始化为未选中
         completedMovement = false;//初始化移动为未完成状态
         gameObject.GetComponentInChildren<SpriteRenderer>().color = Color.white;//将单位设置为白色
-        setIdleAnimation();//设置待机动画
+        //setIdleAnimation();//设置待机动画
         //gameObject.GetComponentInChildren<Renderer>().material = unitMaterial;//3D情况下的设置
     }
     public movementStates getMovementStateEnum(int i)//获取当前单位的状态

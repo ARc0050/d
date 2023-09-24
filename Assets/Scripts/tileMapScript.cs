@@ -14,7 +14,7 @@ public class tileMapScript : MonoBehaviour
     public Tile[] tileTypes;
     public int[,] tiles;
 
-    //开始时已经存在于地图上的单位
+    //存在于地图上的所有单位
     [Header("Units on the board")]
     public GameObject unitsOnBoard;
 
@@ -114,8 +114,7 @@ public class tileMapScript : MonoBehaviour
                
                 if ( selectTileToMoveTo())//如果目标可以移动到
                 {
-                    //selectedSound.Play();
-                    //Debug.Log("movement path has been located");
+                    
                     unitSelectedPreviousX = selectedUnit.GetComponent<UnitScript>().x;
                     unitSelectedPreviousY = selectedUnit.GetComponent<UnitScript>().y;//暂存当前单位的位置，取消时返回
                     previousOccupiedTile = selectedUnit.GetComponent<UnitScript>().tileBeingOccupied;//暂存当前占据的格子，取消时返回
@@ -329,10 +328,11 @@ public class tileMapScript : MonoBehaviour
 
     public void setIfTileIsOccupied()//如果格子上有单位，则设置为已占用
     {
-        foreach (Transform team in unitsOnBoard.transform)//找到已有单位中的队伍
+        foreach (Transform team in unitsOnBoard.transform)//找到所有单位中的所有队伍
         {
             //Debug.Log("Set if Tile is Occupied is Called");
-            foreach (Transform unitOnTeam in team) { //找到队伍中的所有单位
+            foreach (Transform unitOnTeam in team) //找到队伍中的所有单位
+            { 
                 int unitX = unitOnTeam.GetComponent<UnitScript>().x;
                 int unitY = unitOnTeam.GetComponent<UnitScript>().y;
                 unitOnTeam.GetComponent<UnitScript>().tileBeingOccupied = tilesOnMap[unitX, unitY];//在单位上绑定单位和相应位置的格子
@@ -347,7 +347,7 @@ public class tileMapScript : MonoBehaviour
 
         if (selectedUnit.GetComponent<UnitScript>().x == x && selectedUnit.GetComponent<UnitScript>().y == y)
         {
-            Debug.Log("选到了有单位在的格子");
+            Debug.Log("选到了自己单位在的格子");
             currentPath = new List<Node>();//初始化当前路径
             selectedUnit.GetComponent<UnitScript>().path = currentPath;//选中的单位的路径为当前路径
             
@@ -561,9 +561,9 @@ public class tileMapScript : MonoBehaviour
 
             if (GMS.tileBeingDisplayed.GetComponent<ClickableTileScript>().unitOnTile != null)//如果光标对象的单位站的格子不是空的
             {
-                GameObject tempSelectedUnit = GMS.tileBeingDisplayed.GetComponent<ClickableTileScript>().unitOnTile;//创建一个object，是光标对象的单位站的格子
+                GameObject tempSelectedUnit = GMS.tileBeingDisplayed.GetComponent<ClickableTileScript>().unitOnTile;//创建一个object，是光标对象的格子上的单位
                 if (tempSelectedUnit.GetComponent<UnitScript>().unitMoveState == tempSelectedUnit.GetComponent<UnitScript>().getMovementStateEnum(0)
-                               && tempSelectedUnit.GetComponent<UnitScript>().teamNum == GMS.currentTeam)//如果想要选择的单位处于未选中状态，且角色队伍等于当前队伍
+                               && tempSelectedUnit.GetComponent<UnitScript>().teamNum == GMS.currentTeam && (GMS.currentTeam == 0|| GMS.currentTeam == 1))//如果想要选择的单位处于未选中状态，且角色队伍等于当前队伍,且角色队伍是可以选中的队伍，即主角或召唤物
                 {
                     disableHighlightUnitRange();//取消地图上所有的高亮显示
                     //selectedSound.Play();
@@ -716,7 +716,6 @@ public class tileMapScript : MonoBehaviour
         Node unitInitialNode = graph[selectedUnit.GetComponent<UnitScript>().x, selectedUnit.GetComponent<UnitScript>().y];
         finalMovementHighlight = getUnitMovementOptions();//获取单位可以到达的位置节点
         totalAttackableTiles = getUnitTotalAttackableTiles(finalMovementHighlight, attRange, unitInitialNode);//获取所有最远攻击范围的节点【未移动完成时】
-        //Debug.Log("There are this many available tiles for the unit: "+finalMovementHighlight.Count);
 
         foreach (Node n in totalAttackableTiles)//对于最远可攻击的所有节点遍历
         {

@@ -351,6 +351,7 @@
 "Assets/Scripts/Data_SO/CurrEffect_SO.cs"
 "Assets/Scripts/Data_SO/DiceList_SO.cs"
 "Assets/Scripts/Data_SO/InventoryEffect_SO.cs"
+"Assets/Scripts/enemyAI.cs"
 "Assets/Scripts/gameManagerScript.cs"
 "Assets/Scripts/gameSceneManager.cs"
 "Assets/Scripts/Node.cs"

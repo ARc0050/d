@@ -30,12 +30,14 @@ public class gameManagerScript : MonoBehaviour
 
     /// 团队数量被在代码里被定死了是2，如果将来有变化，该类中的一些函数也需要修改，以更新这一变化。
 
-    public int numberOfTeams = 2;
+    public int numberOfTeams = 4;
     public int currentTeam;
     public GameObject unitsOnBoard;
 
     public GameObject team1;
     public GameObject team2;
+    public GameObject team3;
+    public GameObject team4;
 
     public GameObject unitBeingDisplayed;
     public GameObject tileBeingDisplayed;
@@ -98,7 +100,7 @@ public class gameManagerScript : MonoBehaviour
 
 
             //如果选中了目标（选中的单位不等于null）以及该目标目前是未选中的（getMovementStateEnum的第一项（1）是unselected，它和目标当前的unitMoveState一致，都是unselected（1））
-            if (TMS.selectedUnit != null && TMS.selectedUnit.GetComponent<UnitScript>().getMovementStateEnum(1) == TMS.selectedUnit.GetComponent<UnitScript>().unitMoveState)
+            if (TMS.selectedUnit != null && TMS.selectedUnit.GetComponent<UnitScript>().getMovementStateEnum(1) == TMS.selectedUnit.GetComponent<UnitScript>().unitMoveState && TMS.selectedUnit.GetComponent<UnitScript>().teamNum == 0)
             {
 
 
@@ -220,6 +222,14 @@ public class gameManagerScript : MonoBehaviour
         {
             teamToReturn = team2;
         }
+        else if (i == 2)
+        {
+            teamToReturn = team3;
+        }
+        else if (i == 3)
+        {
+            teamToReturn = team4;
+        }
         return teamToReturn;
     }
 
@@ -253,8 +263,16 @@ public class gameManagerScript : MonoBehaviour
             //    playerPhaseAnim.SetTrigger("slideRightTrigger");
             //    playerPhaseText.SetText("Player 1 Phase");
             //}
-            teamHealthbarColorUpdate();
+            //teamHealthbarColorUpdate();
             setCurrentTeamUI();
+            if(currentTeam == 2 || currentTeam == 3)
+            {
+                foreach (Transform unit in returnTeam(currentTeam).transform)
+                {
+                    unit.GetComponent<enemyAI>().action = true;
+                }
+                
+            }
         }
     }
 
@@ -265,7 +283,7 @@ public class gameManagerScript : MonoBehaviour
     {
         //  Debug.Log(team1.transform.childCount);
         //  Debug.Log(team2.transform.childCount);
-        StartCoroutine(checkIfUnitsRemainCoroutine(unit,enemy)); //这个协程是用来干嘛的
+        StartCoroutine(checkIfUnitsRemainCoroutine(unit,enemy)); //一个协程，用于检查两个单位（或玩家）之间的战斗是否结束，并显示胜利者，同时确保在显示胜利者之前，所有战斗相关的动画和事件都已经完成
     }
 
 
