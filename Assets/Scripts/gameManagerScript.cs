@@ -12,12 +12,12 @@ public class gameManagerScript : MonoBehaviour
     public TMP_Text currentTeamUI;
     public Canvas displayWinnerUI;
 
-    public TMP_Text UIunitCurrentHealth;
-    public TMP_Text UIunitAttackDamage;
-    public TMP_Text UIunitAttackRange;
-    public TMP_Text UIunitMoveSpeed;
-    public TMP_Text UIunitName;
-    public UnityEngine.UI.Image UIunitSprite;
+    //public TMP_Text UIunitCurrentHealth;
+    //public TMP_Text UIunitAttackDamage;
+    //public TMP_Text UIunitAttackRange;
+    //public TMP_Text UIunitMoveSpeed;
+    //public TMP_Text UIunitName;
+    //public UnityEngine.UI.Image UIunitSprite;
 
     public Canvas UIunitCanvas;
     public GameObject playerPhaseBlock;
@@ -94,7 +94,7 @@ public class gameManagerScript : MonoBehaviour
         {
             //Update cursorLocation and unit appearing in the topLeft
             cursorUIUpdate(); //激活这个函数时可以高亮鼠标悬停处的可选中格子
-            unitUIUpdate();   //激活这个函数时如果当前的可选中格子里有个unit，那么就在UI界面里显示这个Unit的面板数值
+            //unitUIUpdate();   //激活这个函数时如果当前的可选中格子里有个unit，那么就在UI界面里显示这个Unit的面板数值
 
 
             //如果选中了目标（选中的单位不等于null）以及该目标目前是未选中的（getMovementStateEnum的第一项（1）是unselected，它和目标当前的unitMoveState一致，都是unselected（1））
@@ -243,16 +243,16 @@ public class gameManagerScript : MonoBehaviour
         if (TMS.selectedUnit == null)
         {
             switchCurrentPlayer();
-            if (currentTeam == 1)
-            {
-                playerPhaseAnim.SetTrigger("slideLeftTrigger");
-                playerPhaseText.SetText("Player 2 Phase");
-            }
-            else if (currentTeam == 0)
-            {
-                playerPhaseAnim.SetTrigger("slideRightTrigger");
-                playerPhaseText.SetText("Player 1 Phase");
-            }
+            //if (currentTeam == 1)
+            //{
+            //    playerPhaseAnim.SetTrigger("slideLeftTrigger");
+            //    playerPhaseText.SetText("Player 2 Phase");
+            //}
+            //else if (currentTeam == 0)
+            //{
+            //    playerPhaseAnim.SetTrigger("slideRightTrigger");
+            //    playerPhaseText.SetText("Player 1 Phase");
+            //}
             teamHealthbarColorUpdate();
             setCurrentTeamUI();
         }
@@ -346,68 +346,68 @@ public class gameManagerScript : MonoBehaviour
 
     //In and Out：void
     //描述：被高亮显示的Unit会在UI界面上显示其面板数值
-    public void unitUIUpdate()
-    {
-        if (!displayingUnitInfo) //如果没有UnitInfo被显示
-        {
-            if (hit.transform.CompareTag("Unit")) //如果raycast射线点到的是一个unit
-            {
-                UIunitCanvas.enabled = true; //激活UIunitCanvas
-                displayingUnitInfo = true;   //展示UnitInfo
-                unitBeingDisplayed = hit.transform.parent.gameObject;  //更新unitBeingDisplayed
-                var highlightedUnitScript = hit.transform.parent.gameObject.GetComponent<UnitScript>(); //获得这个位置（子级的数据）的位于父级的Unit的Script
+    //public void unitUIUpdate()
+    //{
+    //    if (!displayingUnitInfo) //如果没有UnitInfo被显示
+    //    {
+    //        if (hit.transform.CompareTag("Unit")) //如果raycast射线点到的是一个unit
+    //        {
+    //            UIunitCanvas.enabled = true; //激活UIunitCanvas
+    //            displayingUnitInfo = true;   //展示UnitInfo
+    //            unitBeingDisplayed = hit.transform.parent.gameObject;  //更新unitBeingDisplayed
+    //            var highlightedUnitScript = hit.transform.parent.gameObject.GetComponent<UnitScript>(); //获得这个位置（子级的数据）的位于父级的Unit的Script
 
-                UIunitCurrentHealth.SetText(highlightedUnitScript.currentHealthPoints.ToString());     //在UI上展示该Unit的面板
-                UIunitAttackDamage.SetText(highlightedUnitScript.attackDamage.ToString());
-                UIunitAttackRange.SetText(highlightedUnitScript.attackRange.ToString());
-                UIunitMoveSpeed.SetText(highlightedUnitScript.moveSpeed.ToString());
-                UIunitName.SetText(highlightedUnitScript.unitName);
-                UIunitSprite.sprite = highlightedUnitScript.unitSprite;
+    //            UIunitCurrentHealth.SetText(highlightedUnitScript.currentHealthPoints.ToString());     //在UI上展示该Unit的面板
+    //            UIunitAttackDamage.SetText(highlightedUnitScript.attackDamage.ToString());
+    //            UIunitAttackRange.SetText(highlightedUnitScript.attackRange.ToString());
+    //            UIunitMoveSpeed.SetText(highlightedUnitScript.moveSpeed.ToString());
+    //            UIunitName.SetText(highlightedUnitScript.unitName);
+    //            UIunitSprite.sprite = highlightedUnitScript.unitSprite;
                 
-            }
-            else if (hit.transform.CompareTag("Tile"))//如果raycast射线点到的是一个tile
-            {
-                if (hit.transform.GetComponent<ClickableTileScript>().unitOnTile != null) //如果这tile上面不是空的（有一个unit在这个tile上）
-                {
+    //        }
+    //        else if (hit.transform.CompareTag("Tile"))//如果raycast射线点到的是一个tile
+    //        {
+    //            if (hit.transform.GetComponent<ClickableTileScript>().unitOnTile != null) //如果这tile上面不是空的（有一个unit在这个tile上）
+    //            {
                     
 
-                    UIunitCanvas.enabled = true;       //二二三四，再来一次
-                    displayingUnitInfo = true;
-                    unitBeingDisplayed = hit.transform.GetComponent<ClickableTileScript>().unitOnTile;
-                    var highlightedUnitScript = unitBeingDisplayed.GetComponent<UnitScript>();
+    //                UIunitCanvas.enabled = true;       //二二三四，再来一次
+    //                displayingUnitInfo = true;
+    //                unitBeingDisplayed = hit.transform.GetComponent<ClickableTileScript>().unitOnTile;
+    //                var highlightedUnitScript = unitBeingDisplayed.GetComponent<UnitScript>();
 
-                    UIunitCurrentHealth.SetText(highlightedUnitScript.currentHealthPoints.ToString());
-                    UIunitAttackDamage.SetText(highlightedUnitScript.attackDamage.ToString());
-                    UIunitAttackRange.SetText(highlightedUnitScript.attackRange.ToString());
-                    UIunitMoveSpeed.SetText(highlightedUnitScript.moveSpeed.ToString());
-                    UIunitName.SetText(highlightedUnitScript.unitName);
-                    UIunitSprite.sprite = highlightedUnitScript.unitSprite;
+    //                UIunitCurrentHealth.SetText(highlightedUnitScript.currentHealthPoints.ToString());
+    //                UIunitAttackDamage.SetText(highlightedUnitScript.attackDamage.ToString());
+    //                UIunitAttackRange.SetText(highlightedUnitScript.attackRange.ToString());
+    //                UIunitMoveSpeed.SetText(highlightedUnitScript.moveSpeed.ToString());
+    //                UIunitName.SetText(highlightedUnitScript.unitName);
+    //                UIunitSprite.sprite = highlightedUnitScript.unitSprite;
 
-                }
-            }
-        }
-        else if (hit.transform.gameObject.CompareTag("Tile")) //如果raycast射线点到的是一个tile
-        {
-            if (hit.transform.GetComponent<ClickableTileScript>().unitOnTile == null) //如果这tile上面是空的
-            {
-                UIunitCanvas.enabled = false;
-                displayingUnitInfo = false;
-            }
-            else if (hit.transform.GetComponent<ClickableTileScript>().unitOnTile != unitBeingDisplayed)//如果tile上的Unit和unitBeingDisplayed不一样，比如说鼠标从原先悬停的unit上离开了
-            {
-                UIunitCanvas.enabled = false; //让之前显示的数值面板UI消失
-                displayingUnitInfo = false;
-            }
-        }
-        else if (hit.transform.gameObject.CompareTag("Unit")) //如果射线点到的Unit和unitBeingDisplayed不一样，比如说鼠标从原先悬停的unit上移动到另一个Unit
-        {
-            if (hit.transform.parent.gameObject != unitBeingDisplayed)
-            {
-                UIunitCanvas.enabled = false; //让之前显示的数值面板UI消失（然后进入上面的if case生成当前选中的unit的数值UI）
-                displayingUnitInfo = false;
-            }
-        }
-    }
+    //            }
+    //        }
+    //    }
+    //    else if (hit.transform.gameObject.CompareTag("Tile")) //如果raycast射线点到的是一个tile
+    //    {
+    //        if (hit.transform.GetComponent<ClickableTileScript>().unitOnTile == null) //如果这tile上面是空的
+    //        {
+    //            UIunitCanvas.enabled = false;
+    //            displayingUnitInfo = false;
+    //        }
+    //        else if (hit.transform.GetComponent<ClickableTileScript>().unitOnTile != unitBeingDisplayed)//如果tile上的Unit和unitBeingDisplayed不一样，比如说鼠标从原先悬停的unit上离开了
+    //        {
+    //            UIunitCanvas.enabled = false; //让之前显示的数值面板UI消失
+    //            displayingUnitInfo = false;
+    //        }
+    //    }
+    //    else if (hit.transform.gameObject.CompareTag("Unit")) //如果射线点到的Unit和unitBeingDisplayed不一样，比如说鼠标从原先悬停的unit上移动到另一个Unit
+    //    {
+    //        if (hit.transform.parent.gameObject != unitBeingDisplayed)
+    //        {
+    //            UIunitCanvas.enabled = false; //让之前显示的数值面板UI消失（然后进入上面的if case生成当前选中的unit的数值UI）
+    //            displayingUnitInfo = false;
+    //        }
+    //    }
+    //}
 
     //In: 
     //Out: void
