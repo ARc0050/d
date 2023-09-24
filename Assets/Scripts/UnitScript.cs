@@ -10,23 +10,23 @@ public class UnitScript : MonoBehaviour
     public int x;
     public int y;
 
-    //This is a low tier idea, don't use it 
+    //这是一个不太好的想法，不要用
     public bool coroutineRunning;
 
-    //Meta defining play here
+    //元定义
     public Queue<int> movementQueue;
     public Queue<int> combatQueue;
-    //This global variable is used to increase the units movementSpeed when travelling on the board
+    //移动速度
     public float visualMovementSpeed = .15f;
 
-    //Animator
+    //动画控制器
     public Animator animator;
 
 
     public GameObject tileBeingOccupied;
 
     public GameObject damagedParticle;
-    //UnitStats
+    //单位属性
     public string unitName;
     public int moveSpeed = 2;    
     public int attackRange = 1;
@@ -36,7 +36,7 @@ public class UnitScript : MonoBehaviour
     public Sprite unitSprite;
 
     [Header("UI Elements")]
-    //Unity UI References
+    //UI界面
     public Canvas healthBarCanvas;
     public TMP_Text hitPointsText;
     public Image healthBar;
@@ -46,29 +46,29 @@ public class UnitScript : MonoBehaviour
     public Image damageBackdrop;
     
 
-    //This may change in the future if 2d sprites are used instead
+    //如果用2D素材的话可能会改变
     //public Material unitMaterial;
     //public Material unitWaitMaterial;
 
     public tileMapScript map;
 
-    //Location for positional update
+    //更新位置需要用到的出发点和终点
     public Transform startPoint;
     public Transform endPoint;
     public float moveSpeedTime = 1f;
     
-    //3D Model or 2D Sprite variables to check which version to use
-    //Make sure only one of them are enabled in the inspector
+    //检查使用的是3D模型还是2D精灵
+    //确保只使用了其中一种
     //public GameObject holder3D;
     public GameObject holder2D;
-    // Total distance between the markers.
+    // 总计距离
     private float journeyLength;
 
-    //Boolean to startTravelling
+    //确认单位是否在移动的bool
     public bool unitInMovement;
 
 
-    //Enum for unit states
+    //单位的状态类型
     public enum movementStates
     {
         Unselected,
@@ -78,63 +78,63 @@ public class UnitScript : MonoBehaviour
     }
     public movementStates unitMoveState;
    
-    //Pathfinding
+    //寻路
 
-    public List<Node> path = null;
+    public List<Node> path = null;//路径节点的列表为空
 
-    //Path for moving unit's transform
-    public List<Node> pathForMovement = null;
+    //移动单元的路径变换
+    public List<Node> pathForMovement = null;//用于移动的路径节点列表为空
     public bool completedMovement = false;
 
-    private void Awake()
+    private void Awake()//在游戏一开始就执行，初始化
     {
 
-        animator = holder2D.GetComponent<Animator>();
-        movementQueue = new Queue<int>();
-        combatQueue = new Queue<int>();
+        animator = holder2D.GetComponent<Animator>();//获取相应单位的动画控制器
+        movementQueue = new Queue<int>();//定义移动队列
+        combatQueue = new Queue<int>();//定义战斗队列
        
         
-        x = (int)transform.position.x;
-        y = (int)transform.position.z;
-        unitMoveState = movementStates.Unselected;
-        currentHealthPoints = maxHealthPoints;
-        hitPointsText.SetText(currentHealthPoints.ToString());
+        x = (int)transform.position.x;//将当前单位的X坐标转为int存储
+        y = (int)transform.position.z;//将当前单位的Y坐标转为int存储
+        unitMoveState = movementStates.Unselected;//将单位的状态类型初始化为未选中
+        currentHealthPoints = maxHealthPoints;//将当前HP初始化为最大HP
+        hitPointsText.SetText(currentHealthPoints.ToString());//显示UI文字
         
      
     }
 
-    public void LateUpdate()
+    public void LateUpdate()//每帧都会调用，在update方法后，这里是保证角色的朝向始终面对相机
     {
         healthBarCanvas.transform.forward = Camera.main.transform.forward;
         //damagePopupCanvas.transform.forward = Camera.main.transform.forward;
         holder2D.transform.forward = Camera.main.transform.forward;
     }
 
-    public void MoveNextTile()
+    public void MoveNextTile()//前进到下一个路径中的下一个格子
     {
-        if (path.Count == 0)
+        if (path.Count == 0)//检查路径长度是否为零
         {
             return;
         }
         else
         {
-            StartCoroutine(moveOverSeconds(transform.gameObject, path[path.Count - 1]));
+            StartCoroutine(moveOverSeconds(transform.gameObject, path[path.Count - 1]));//协程代码，使用moveOverSeconds方法，传进当前对象及路径最底部的位置的节点
         }
         
      }
 
    
-    public void moveAgain()
+    public void moveAgain()//到该玩家的回合后再次行动
     {
         
-        path = null;
-        setMovementState(0);
-        completedMovement = false;
-        gameObject.GetComponentInChildren<SpriteRenderer>().color = Color.white;
-        setIdleAnimation();
-        //gameObject.GetComponentInChildren<Renderer>().material = unitMaterial;
+        path = null;//将路径定义为空
+        setMovementState(0);//将单位初始化为未选中
+        completedMovement = false;//初始化移动为未完成状态
+        gameObject.GetComponentInChildren<SpriteRenderer>().color = Color.white;//将单位设置为白色
+        setIdleAnimation();//设置待机动画
+        //gameObject.GetComponentInChildren<Renderer>().material = unitMaterial;//3D情况下的设置
     }
-    public movementStates getMovementStateEnum(int i)
+    public movementStates getMovementStateEnum(int i)//获取当前单位的状态
     {
         if (i == 0)
         {
@@ -155,7 +155,7 @@ public class UnitScript : MonoBehaviour
         return movementStates.Unselected;
         
     }
-    public void setMovementState(int i)
+    public void setMovementState(int i)//定义单位的状态
     {
         if (i == 0)
         {
@@ -176,23 +176,23 @@ public class UnitScript : MonoBehaviour
        
 
     }
-    public void updateHealthUI()
+    public void updateHealthUI()//刷新生命值UI显示
     {
         healthBar.fillAmount = (float)currentHealthPoints / maxHealthPoints;
         hitPointsText.SetText(currentHealthPoints.ToString());
     }
-    public void dealDamage(int x)
+    public void dealDamage(int x)//造成伤害的函数
     {
         currentHealthPoints = currentHealthPoints - x;
         updateHealthUI();
     }
-    public void wait()
+    public void wait()//等待，不可移动
     {
 
-        gameObject.GetComponentInChildren<SpriteRenderer>().color = Color.gray;
-        //gameObject.GetComponentInChildren<Renderer>().material = unitWaitMaterial;
+        gameObject.GetComponentInChildren<SpriteRenderer>().color = Color.gray;//将单位设置为灰色
+        //gameObject.GetComponentInChildren<Renderer>().material = unitWaitMaterial;//3D
     }
-    public void changeHealthBarColour(int i)
+    public void changeHealthBarColour(int i)//改变血条UI颜色，传入0则为蓝色，传入1则为红色
     {
         if (i == 0)
         {
@@ -204,12 +204,12 @@ public class UnitScript : MonoBehaviour
             healthBar.color = Color.red;
         }
     }
-    public void unitDie()
+    public void unitDie()//单位死亡
     {
-        if (holder2D.activeSelf)
+        if (holder2D.activeSelf)//检查单位是否可行动，可以行动则执行销毁代码
         {
-            StartCoroutine(fadeOut());
-            StartCoroutine(checkIfRoutinesRunning());
+            StartCoroutine(fadeOut());//单位销毁时颜色渐变
+            StartCoroutine(checkIfRoutinesRunning());//单位销毁时删除对象
            
         }
        
@@ -224,131 +224,131 @@ public class UnitScript : MonoBehaviour
     }
     public IEnumerator checkIfRoutinesRunning()
     {
-        while (combatQueue.Count>0)
+        while (combatQueue.Count>0)//当战斗队列大于零时
         {
           
             yield return new WaitForEndOfFrame();
         }
         
-        Destroy(gameObject);
+        Destroy(gameObject);//删除单位对象
 
     }    
-    public IEnumerator fadeOut()
+    public IEnumerator fadeOut()//逐步修改单位颜色的方法
     {
 
-        combatQueue.Enqueue(1);
+        combatQueue.Enqueue(1);//战斗队列中加入数字1
         //setDieAnimation();
         //yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-        Renderer rend = GetComponentInChildren<SpriteRenderer>();
+        Renderer rend = GetComponentInChildren<SpriteRenderer>();//获取单位的外观
         
-        for (float f = 1f; f >= .05; f -= 0.01f)
+        for (float f = 1f; f >= .05; f -= 0.01f)//逐步缩小f，修改单位透明度
         {
             Color c = rend.material.color;
             c.a = f;
             rend.material.color = c;
             yield return new WaitForEndOfFrame();
         }
-        combatQueue.Dequeue();
+        combatQueue.Dequeue();//移除战斗队列元素
        
 
     }
-    public IEnumerator moveOverSeconds(GameObject objectToMove,Node endNode)
+    public IEnumerator moveOverSeconds(GameObject objectToMove,Node endNode)//移动方法，传入需要开始移动的对象和结束节点
     {
-        movementQueue.Enqueue(1);
+        movementQueue.Enqueue(1);//将数字1添加到移动队列中
 
-        //remove first thing on path because, its the tile we are standing on
         
-        path.RemoveAt(0);
-        while (path.Count != 0)
+        
+        path.RemoveAt(0);//删除路径上的第一个点，因为这是当前站立的位置
+        while (path.Count != 0)//
         {
             
-            Vector3 endPos = map.tileCoordToWorldCoord(path[0].x, path[0].y);
-            objectToMove.transform.position = Vector3.Lerp(transform.position, endPos, visualMovementSpeed);
-            if ((transform.position - endPos).sqrMagnitude < 0.001)
+            Vector3 endPos = map.tileCoordToWorldCoord(path[0].x, path[0].y);//使用了地图脚本中的一个方法，将当前节点的xy坐标转化为世界坐标，并赋值给endPos变量
+            objectToMove.transform.position = Vector3.Lerp(transform.position, endPos, visualMovementSpeed);//使用线性插值移动传入的对象至endPos，传入当前位置，目标位置和移动速度
+            if ((transform.position - endPos).sqrMagnitude < 0.001)//如果当前目标和目标极度接近
             {
 
-                path.RemoveAt(0);
-              
+                path.RemoveAt(0);//删除路径上的第一个点
+
             }
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();//暂时停止循环并等待下一帧启用
         }
-        visualMovementSpeed = 0.15f;
-        transform.position = map.tileCoordToWorldCoord(endNode.x, endNode.y);
+        visualMovementSpeed = 0.15f;//定义移动速度
+        transform.position = map.tileCoordToWorldCoord(endNode.x, endNode.y);//使用了地图脚本中的一个方法，将结束节点的xy坐标转化为世界坐标，并赋值给当前位置
 
         x = endNode.x;
         y = endNode.y;
-        tileBeingOccupied.GetComponent<ClickableTileScript>().unitOnTile = null;
-        tileBeingOccupied = map.tilesOnMap[x, y];
-        movementQueue.Dequeue();
+        tileBeingOccupied.GetComponent<ClickableTileScript>().unitOnTile = null;//使原本站立的格子与单位解绑
+        tileBeingOccupied = map.tilesOnMap[x, y];//绑定单位和单位正在站立的位置的格子
+        movementQueue.Dequeue();//移除移动队列的第一个元素
 
     }
 
 
 
-    public IEnumerator displayDamageEnum(int damageTaken)
+    public IEnumerator displayDamageEnum(int damageTaken)//传入伤害变量，展示伤害数字的方法
     {
 
-        combatQueue.Enqueue(1);
+        combatQueue.Enqueue(1);//战斗队列添加元素1
        
-        damagePopupText.SetText(damageTaken.ToString());
-        damagePopupCanvas.enabled = true;
-        for (float f = 1f; f >=-0.01f; f -= 0.01f)
+        damagePopupText.SetText(damageTaken.ToString());//飘出伤害数字
+        damagePopupCanvas.enabled = true;//伤害可见
+        for (float f = 1f; f >=-0.01f; f -= 0.01f)//逐步缩小f值
         {
             
-            Color backDrop = damageBackdrop.GetComponent<Image>().color;
-            Color damageValue = damagePopupText.color;
+            Color backDrop = damageBackdrop.GetComponent<Image>().color;//获取伤害数字背景图片颜色
+            Color damageValue = damagePopupText.color;//获取伤害数字的颜色
 
             backDrop.a = f;
             damageValue.a = f;
             damageBackdrop.GetComponent<Image>().color = backDrop;
-            damagePopupText.color = damageValue;
+            damagePopupText.color = damageValue;//以上都是修改伤害数字的颜色变化
            yield return new WaitForEndOfFrame();
         }
 
         //damagePopup.enabled = false;
-        combatQueue.Dequeue();
+        combatQueue.Dequeue();//移除战斗队列元素
        
     }
-    public void resetPath()
+    public void resetPath()//移动初始化
     {
-        path = null;
-        completedMovement = false;
+        path = null;//路径初始化
+        completedMovement = false;//完成移动初始化
     }
-    public void displayDamage(int damageTaken)
+    public void displayDamage(int damageTaken)//飘出伤害数字
     {
         damagePopupCanvas.enabled = true;
         damagePopupText.SetText(damageTaken.ToString());
     }
-    public void disableDisplayDamage()
+    public void disableDisplayDamage()//伤害数字不可见
     {
         damagePopupCanvas.enabled = false;
     }
 
-    public void setSelectedAnimation()
+    public void setSelectedAnimation()//设置动画状态触发为选中
     {
         
         animator.SetTrigger("toSelected");
     }
-    public void setIdleAnimation()
+    public void setIdleAnimation()//设置动画状态触发为待机
     {        
         animator.SetTrigger("toIdle");
     }
-    public void setWalkingAnimation()
+    public void setWalkingAnimation()//设置动画状态触发为移动
     {
         animator.SetTrigger("toWalking");
     }
 
-    public void setAttackAnimation()
+    public void setAttackAnimation()//设置动画状态触发为攻击
     {
        animator.SetTrigger("toAttacking");
     }
-    public void setWaitIdleAnimation()
+    public void setWaitIdleAnimation()//设置动画状态触发为待机等待
     {
         
         animator.SetTrigger("toIdleWait");
     }
        
-    public void setDieAnimation()
+    public void setDieAnimation()//设置动画状态触发为死亡
     {
         animator.SetTrigger("dieTrigger");
     }
