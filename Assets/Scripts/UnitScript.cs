@@ -105,14 +105,18 @@ public class UnitScript : MonoBehaviour
 
     public void MoveNextTile()//前进到下一个路径中的下一个格子
     {
-        if (path.Count == 0)//检查路径长度是否为零
+        if (path != null)
         {
-            return;
+            if (path.Count == 0)//检查路径长度是否为零
+            {
+                return;
+            }
+            else
+            {
+                StartCoroutine(moveOverSeconds(transform.gameObject, path[path.Count - 1]));//协程代码，使用moveOverSeconds方法，传进当前对象及路径最底部的位置的节点
+            }
         }
-        else
-        {
-            StartCoroutine(moveOverSeconds(transform.gameObject, path[path.Count - 1]));//协程代码，使用moveOverSeconds方法，传进当前对象及路径最底部的位置的节点
-        }
+        
         
      }
 
@@ -124,7 +128,7 @@ public class UnitScript : MonoBehaviour
         setMovementState(0);//将单位初始化为未选中
         completedMovement = false;//初始化移动为未完成状态
         gameObject.GetComponentInChildren<SpriteRenderer>().color = Color.white;//将单位设置为白色
-        //setIdleAnimation();//设置待机动画
+        setIdleAnimation();//设置待机动画
         //gameObject.GetComponentInChildren<Renderer>().material = unitMaterial;//3D情况下的设置
     }
     public movementStates getMovementStateEnum(int i)//获取当前单位的状态

@@ -393,6 +393,7 @@
 "Assets/Scripts/UI/EffectSlotUI.cs"
 "Assets/Scripts/UI/UIManager.cs"
 "Assets/Scripts/UnitScript.cs"
+"Assets/Scripts/Utilities/CamControl.cs"
 "Assets/Scripts/Utilities/DataCollection.cs"
 "Assets/Scripts/Utilities/Enums.cs"
 "Assets/Scripts/Utilities/EventHandler.cs"

@@ -32,9 +32,11 @@ public class gameManagerScript : MonoBehaviour
 
     public int numberOfTeams = 4;
     public int currentTeam;
+    public Transform currentunit;
     public GameObject unitsOnBoard;
 
     public GameObject team1;
+    public GameObject Player;
     public GameObject team2;
     public GameObject team3;
     public GameObject team4;
@@ -194,18 +196,68 @@ public class gameManagerScript : MonoBehaviour
         currentTeamUI.SetText("Current Player is : Player " + (currentTeam+1).ToString());
     }
 
-    //In: 
-    //Out: void
-    //描述：由Player1转换到Player2
-    public void switchCurrentPlayer()
+    //描述：转换单位和回合,确认当前的单位，如果当前还有怪物要行动则返回True
+    public bool switchCurrentPlayer()
     {
-        resetUnitsMovements(returnTeam(currentTeam)); //将之前行动过的一方的行动状态重置
-        currentTeam++;
-        if (currentTeam == numberOfTeams) //目前有两个队，当两个队都行动过了
+        
+
+        if (currentTeam >= 2)//如果是怪物队伍
         {
-            currentTeam = 0;              //重置currentTeam
+            foreach (Transform unit in returnTeam(currentTeam).transform)
+            {
+                if (unit.GetComponent<UnitScript>().unitMoveState != unit.GetComponent<UnitScript>().getMovementStateEnum(3))//该单位不在等待中
+                {
+                    unit.GetComponent<enemyAI>().action = true;//使单位可以行动
+                    currentunit = unit;
+                    return true;//有一个还没行动就把他抓回来行动,然后把其赋值为当前单位,然后结束这个方法
+                }
+
+            }
+
         }
         
+            //currentunit = Player.transform;
+        return false;
+
+    }
+
+    //描述：转换队伍
+    public void switchCurrentTeam()
+    {
+        
+
+        if (returnTeam(currentTeam + 1).transform.childCount <= 0)//如果下一个队伍没有任何单位了
+        {
+            currentTeam++;
+        }
+        currentTeam++;
+        if (currentTeam >= numberOfTeams ) //目前有四个队，当四个队都行动过了
+        {
+            currentTeam = 0;
+            currentunit = Player.transform;//重置currentTeam和当前单位
+            for (int i = 0; i < 4; i++)
+            {
+                
+                resetUnitsTeamMovements(returnTeam(i));//将所有行动过的队伍状态全部重置
+            }
+            
+        }
+
+        if (currentTeam >= 2)//如果是怪物队伍,需要让第一个怪物先动一次
+        {
+            foreach (Transform unit in returnTeam(currentTeam).transform)
+            {
+                if (unit.GetComponent<UnitScript>().unitMoveState != unit.GetComponent<UnitScript>().getMovementStateEnum(3))//单位不在等待中
+                {
+                    unit.GetComponent<enemyAI>().action = true;//使单位可以行动
+                    currentunit = unit;
+                    return;//有一个还没行动就把他抓回来行动,然后把其赋值为当前单位,然后结束这个方法
+                }
+
+            }
+
+        }
+
     }
 
     //输入：currentTeam的值，这个值决定了当前行动的是哪一方
@@ -236,23 +288,41 @@ public class gameManagerScript : MonoBehaviour
     //输入：一个已经行动过的队伍，让该队伍内的所有棋子的行动状态重置
     //Out: void
     //描述：让该队伍内的所有棋子的行动状态重置
-    public void resetUnitsMovements(GameObject teamToReset)
+    public void resetUnitsTeamMovements(GameObject teamToReset)
     {
+
         foreach (Transform unit in teamToReset.transform)
         {
             unit.GetComponent<UnitScript>().moveAgain();
         }
     }
 
+    //输入：一个已经行动过的棋子，让该棋子的行动状态重置
+    //Out: void
+    //描述：让该队伍内的所有棋子的行动状态重置
+    public void resetUnitsMovements(Transform unitToReset)
+    {
+
+        unitToReset.GetComponent<UnitScript>().moveAgain();
+    }
+
     //In: 
     //Out: void
-    //描述：在回合结束时激活动画的trigger来播放双方回合结束和开始动画
+    //描述：点击回合结束按钮后的代码
     public void endTurn()
     {
-        
+
         if (TMS.selectedUnit == null)
         {
-            switchCurrentPlayer();
+            currentunit.GetComponent<UnitScript>().setMovementState(3);//当回合结束时，无论如何都将单位状态设置为等待，以不影响后续判断
+
+            
+            if (!switchCurrentPlayer())//如果没有要切换的单位了
+            {
+                switchCurrentTeam();//切换到下一个队伍
+            }
+            
+
             //if (currentTeam == 1)
             //{
             //    playerPhaseAnim.SetTrigger("slideLeftTrigger");
@@ -263,16 +333,9 @@ public class gameManagerScript : MonoBehaviour
             //    playerPhaseAnim.SetTrigger("slideRightTrigger");
             //    playerPhaseText.SetText("Player 1 Phase");
             //}
-            //teamHealthbarColorUpdate();
-            setCurrentTeamUI();
-            if(currentTeam == 2 || currentTeam == 3)
-            {
-                foreach (Transform unit in returnTeam(currentTeam).transform)
-                {
-                    unit.GetComponent<enemyAI>().action = true;
-                }
-                
-            }
+            //teamHealthbarColorUpdate();//改变队伍血条颜色
+            setCurrentTeamUI();//设置队伍UI
+            
         }
     }
 

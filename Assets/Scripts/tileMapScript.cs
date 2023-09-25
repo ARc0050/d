@@ -98,7 +98,7 @@ public class tileMapScript : MonoBehaviour
     private void Update()
     {
 
-        //如果鼠标左键单击，选中单位
+        //如果鼠标左键单击
         if (Input.GetMouseButtonDown(0))
         {
             if (selectedUnit == null)//如果选中单位为空
@@ -131,7 +131,15 @@ public class tileMapScript : MonoBehaviour
             //至此，完成移动
             else if(selectedUnit.GetComponent<UnitScript>().unitMoveState == selectedUnit.GetComponent<UnitScript>().getMovementStateEnum(2))//如果当前单位的状态是已经移动完成
             {
-                finalizeOption();//攻击确认
+                if (selectedUnit.GetComponent<UnitScript>().teamNum >= 2)//如果是怪物的队伍
+                {
+                    
+                }
+                else
+                {
+                    finalizeOption();//攻击确认
+                }
+                
             }
             
         }
@@ -426,6 +434,7 @@ public class tileMapScript : MonoBehaviour
         while (curr != null)//当前节点不是空时
         {
             currentPath.Add(curr);//当前路径中添加当前节点
+            
             curr = prev[curr];//当前节点设置为其上一个节点
         }
         //当前路径中的节点是从目标到起点，需要反转
@@ -461,8 +470,9 @@ public class tileMapScript : MonoBehaviour
         {
             if (tilesOnMap[x, y].GetComponent<ClickableTileScript>().unitOnTile.GetComponent<UnitScript>().teamNum != selectedUnit.GetComponent<UnitScript>().teamNum)
             {
-                return false;
-            }//当有其他单位占据时不可通行
+                
+            }
+            return false;//当有其他单位占据时不可通行
         }
         return tileTypes[tiles[x, y]].isWalkable;//根据该地的类型确认是否可通行
     }
@@ -773,8 +783,10 @@ public class tileMapScript : MonoBehaviour
 
         //设置相邻位置的初始消耗
         finalMovementHighlight.Add(unitInitialNode);//当前单位的位置加入最终高亮列表
+        
         foreach (Node n in unitInitialNode.neighbours)//对于当前单位位置的相邻位置遍历
         {
+            
             cost[n.x, n.y] = costToEnterTile(n.x, n.y);//获取该位置的移动力消耗
             //Debug.Log(cost[n.x, n.y]);
             if (moveSpeed - cost[n.x, n.y] >= 0)//如果移动速度大于等于到该位置的移动力消耗
@@ -787,16 +799,20 @@ public class tileMapScript : MonoBehaviour
 
         while (UIHighlight.Count != 0)//如果UI高亮列表不为空
         {
+           
+
             foreach (Node n in UIHighlight)//对UI高亮列表中的每个节点遍历
             {
                 foreach (Node neighbour in n.neighbours)//对于每个节点的相邻位置遍历
                 {
                     if (!finalMovementHighlight.Contains(neighbour))//如果最终高亮列表中没有该节点
                     {
+                        
                         cost[neighbour.x, neighbour.y] = costToEnterTile(neighbour.x, neighbour.y) + cost[n.x, n.y];//移动力消耗等于相邻位置的移动消耗加上其再相邻位置的移动消耗
                         //Debug.Log(cost[neighbour.x, neighbour.y]);
                         if (moveSpeed - cost[neighbour.x, neighbour.y] >= 0)//如果移动速度大于等于到该位置的移动力消耗
                         {
+                            
                             //Debug.Log(cost[neighbour.x, neighbour.y]);
                             tempUIHighlight.Add(neighbour);//暂时UI高亮列表中加入该节点
                         }
@@ -810,6 +826,7 @@ public class tileMapScript : MonoBehaviour
             tempUIHighlight = new HashSet<Node>();//暂时UI高亮列表初始化
            
         }
+        
         //Debug.Log("The total amount of movable spaces for this unit is: " + finalMovementHighlight.Count);
         //Debug.Log("We have used the function to calculate it this time");
         return finalMovementHighlight;//返回最终高亮列表
@@ -980,6 +997,7 @@ public class tileMapScript : MonoBehaviour
     public IEnumerator deselectAfterMovements(GameObject unit, GameObject enemy)//执行操作后，取消选中单位
     {
         //selectedSound.Play();
+        
         selectedUnit.GetComponent<UnitScript>().setMovementState(3);//设置单位为等待状态
         disableHighlightUnitRange();//取消所有范围高亮
         disableUnitUIRoute();//取消显示箭头图像
@@ -996,9 +1014,13 @@ public class tileMapScript : MonoBehaviour
           
         }
         //Debug.Log("All animations done playing");
-       
-        deselectUnit();//取消选中单位
 
+        if(selectedUnit.GetComponent<enemyAI>() != null)
+        {
+            selectedUnit.GetComponent<enemyAI>().action = false;
+        }
+        
+        deselectUnit();//取消选中单位
 
     }
 

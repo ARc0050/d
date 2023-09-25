@@ -124,7 +124,7 @@ public class battleManagerScript : MonoBehaviour
         while (battleStatus)      //当处于战斗状态时
         {
 
-            StartCoroutine(CSS.camShake(.2f, unit.GetComponent<UnitScript>().attackDamage, getDirection(unit, enemy))); //用协程来启动相机震动
+            //StartCoroutine(CSS.camShake(.2f, unit.GetComponent<UnitScript>().attackDamage, getDirection(unit, enemy))); //用协程来启动相机震动
 
             //当双方都在互相的攻击范围内，且双方的攻击都没击杀对面的时候，就是双方互相攻击时
             if (unit.GetComponent<UnitScript>().attackRange == enemy.GetComponent<UnitScript>().attackRange && enemy.GetComponent<UnitScript>().currentHealthPoints - unit.GetComponent<UnitScript>().attackDamage > 0)
@@ -148,7 +148,7 @@ public class battleManagerScript : MonoBehaviour
         
         if (unit != null)
         {
-           StartCoroutine(returnAfterAttack(unit, startingPos));  //通过协程触发下面的函数
+           StartCoroutine(returnAfterAttack(unit, startingPos));  //通过协程触发攻击后角色返回位置
           
         }
        
