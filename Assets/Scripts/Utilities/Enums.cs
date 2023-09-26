@@ -24,16 +24,28 @@ public enum EffectRangeType
     One
 }
 
-//格子（骰子的）类型
-public enum SlotType
+//格子（效果）类型
+public enum EffectSlotType
 {
-    Curr,Inventory
+    Cur,Inventory, Black
 }
 
-//储存位置（骰子的）类型
-public enum InventoryLocation
+//储存位置（效果）类型
+public enum InventoryEffectLocation
 {
-    Curr, Inventory
+    Cur, Inventory, Black
+}
+
+//格子（骰子）类型
+public enum DiceSlotType
+{
+    Cur, Inventory
+}
+
+//储存位置（骰子）类型
+public enum InventoryDiceLocation
+{
+    Cur, Inventory
 }
 
 //单位的状态类型

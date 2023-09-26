@@ -11,19 +11,13 @@ public class DiceDetails
     public DiceType diceType;
     public Sprite diceIcon;
     public string diceDescription;
-    public int diceValue_A;
     public int effectID_A;
-    public int diceValue_B;
     public int effectID_B;
-    public int diceValue_C;
     public int effectID_C;
-    public int diceValue_D;
     public int effectID_D;
-    public int diceValue_E;
     public int effectID_E;
-    public int diceValue_F;
     public int effectID_F;
-    public int itemPrice;
+    public int dicePrice;
     [Range(0, 1)]
     public float sellPercentage;
 }

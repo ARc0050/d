@@ -12,23 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aabf73e714f8b14429c539cd2be7eb35, type: 3}
   m_Name: DiceList_SO
   m_EditorClassIdentifier: 
-  diceDetailsList:
-  - diceID: 0
-    diceName: 
-    diceType: 0
-    diceIcon: {fileID: 0}
-    diceDescription: 
-    diceValue_A: 0
-    effectID_A: 0
-    diceValue_B: 0
-    effectID_B: 0
-    diceValue_C: 0
-    effectID_C: 0
-    diceValue_D: 0
-    effectID_D: 0
-    diceValue_E: 0
-    effectID_E: 0
-    diceValue_F: 0
-    effectID_F: 0
-    itemPrice: 0
-    sellPercentage: 0
+  diceDetailsList: []

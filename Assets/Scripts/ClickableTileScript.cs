@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class ClickableTileScript : MonoBehaviour    
 {
-    //这个脚本是储存每个可点击的tile里的数据的
-    //每个tile的x和y数据
+    //The x and y co-ordinate of the tile
     public int tileX;
     public int tileY;
-    //站在这个tile上的gameobject
+    //The unit on the tile
     public GameObject unitOnTile;
     public tileMapScript map;
 

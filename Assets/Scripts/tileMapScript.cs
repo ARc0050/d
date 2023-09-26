@@ -54,6 +54,9 @@ public class tileMapScript : MonoBehaviour
     public int mapSizeX;
     public int mapSizeY;
 
+    public int mapBarrier = 10;//障碍物数量
+
+
     //鼠标光线追踪投射此单元，即鼠标选中的位置对象
     [Header("Selected Unit Info")]
     public GameObject selectedUnit;
@@ -78,15 +81,26 @@ public class tileMapScript : MonoBehaviour
     public Material blueUIMat;
 
 
+    private void Awake()
+    {
+        mapSizeX = Random.Range(10, 20);
+        mapSizeY = Random.Range(10, 20);
+
+        GMS.CreatePlayer(new Vector3 (1,0.75f,3));
+        GMS.CreateEnemy(new Vector3(3, 0.75f, 3));
+        GMS.CreateEnemy(new Vector3(6, 0.75f, 3));
+
+    }
+
+
     private void Start()
     {
         //Get the battlemanager running
         //BMS = GetComponent<battleManagerScript>();
         //GMS = GetComponent<gameManagerScript>();
-        
-        generateMapInfo();//为地图的所有格子定义为相应的类型值
-        
         generatePathFindingGraph();//为地图的每一个点创造一个图形
+
+        generateMapInfo();//为地图的所有格子定义为相应的类型值
         
         generateMapVisuals();//实例化地图的图形信息
         
@@ -169,68 +183,50 @@ public class tileMapScript : MonoBehaviour
     }
     
 
-    public void generateMapInfo()//为地图的所有格子定义为相应的类型值
+    public void generateMapInfo()//为地图的所有格子定义为相应的类型值,并保证所有地图点都可以到达
     {
         tiles = new int[mapSizeX, mapSizeY];
+        //int temBarrier = 0;//临时障碍物计算
+
+        //先在地图内生成所有格子的点，所有格子都不是障碍物
         for (int x = 0; x < mapSizeX; x++)
         {
             for (int y = 0; y < mapSizeY; y++)
             {
-                tiles[x, y] = 0;
+                tiles[x, y] = Random.Range(0, 3);
+
             }
         }
-        tiles[2, 7] = 2;
-        tiles[3, 7] = 2;
-       
-        tiles[6, 7] = 2;
-        tiles[7, 7] = 2;
 
-        tiles[2, 2] = 2;
-        tiles[3, 2] = 2;
-       
-        tiles[6, 2] = 2;
-        tiles[7, 2] = 2;
+        ////在不是障碍物的列表中随机一个格子，查看该地方如果设置为障碍物，地图能否通行，如果可以就用
 
-        tiles[0, 3] = 3;
-        tiles[1, 3] = 3;
-        tiles[0, 2] = 3;
-        tiles[1, 2] = 3;
 
-        tiles[0, 6] = 3;
-        tiles[1, 6] = 3;
-        tiles[2, 6] = 3;
-        tiles[0, 7] = 3;
-        tiles[1, 7] = 3;
+        //while (temBarrier < mapBarrier)//障碍物数量满足需求后停止
+        //{
+        //    int temx = Random.Range(0, mapSizeX - 1);
+        //    int temy = Random.Range(0, mapSizeX - 1);
 
-        tiles[2, 3] = 3;
-        tiles[0, 4] = 1;
-        tiles[0, 5] = 1;
-        tiles[1, 4] = 1;
-        tiles[1, 5] = 1;
-        tiles[2, 4] = 3;
-        tiles[2, 5] = 3;
+        //    if (tiles[temx, temx] < 3)//如果这个格子不是障碍物
+        //    {
+        //        tiles[temx, temx] = 3;
+        //        temBarrier += 1;
+                
+        //    }
+        //}
+        //if (!MapIsFullyAccessible())
+        //{
+        //    for (int x = 0; x < mapSizeX; x++)
+        //    {
+        //        for (int y = 0; y < mapSizeY; y++)
+        //        {
+        //            tiles[x, y] = Random.Range(0, 2);
 
-        tiles[4, 4] = 1;
-        tiles[5, 4] = 1;
-        tiles[4, 5] = 1;
-        tiles[5, 5] = 1;
+        //        }
+        //    }
+        //}
 
-        tiles[7, 3] = 3;
-        tiles[8, 3] = 3;
-        tiles[9, 3] = 3;
-        tiles[8, 2] = 3;
-        tiles[9, 2] = 3;
-        tiles[7, 4] = 3;
-        tiles[7, 5] = 3;
-        tiles[7, 6] = 3;
-        tiles[8, 6] = 3;
-        tiles[9, 6] = 3;
-        tiles[8, 7] = 3;
-        tiles[9, 7] = 3;
-        tiles[8, 4] = 1;
-        tiles[8, 5] = 1;
-        tiles[9, 4] = 1;
-        tiles[9, 5] = 1;
+
+
 
 
     }
@@ -355,7 +351,6 @@ public class tileMapScript : MonoBehaviour
 
         if (selectedUnit.GetComponent<UnitScript>().x == x && selectedUnit.GetComponent<UnitScript>().y == y)
         {
-            Debug.Log("选到了自己单位在的格子");
             currentPath = new List<Node>();//初始化当前路径
             selectedUnit.GetComponent<UnitScript>().path = currentPath;//选中的单位的路径为当前路径
             
@@ -568,9 +563,10 @@ public class tileMapScript : MonoBehaviour
         
         if (unitSelected == false && GMS.tileBeingDisplayed!=null)//如果没有已经选中任何单位，且光标对象不为空
         {
-
+            
             if (GMS.tileBeingDisplayed.GetComponent<ClickableTileScript>().unitOnTile != null)//如果光标对象的单位站的格子不是空的
             {
+                
                 GameObject tempSelectedUnit = GMS.tileBeingDisplayed.GetComponent<ClickableTileScript>().unitOnTile;//创建一个object，是光标对象的格子上的单位
                 if (tempSelectedUnit.GetComponent<UnitScript>().unitMoveState == tempSelectedUnit.GetComponent<UnitScript>().getMovementStateEnum(0)
                                && tempSelectedUnit.GetComponent<UnitScript>().teamNum == GMS.currentTeam && (GMS.currentTeam == 0|| GMS.currentTeam == 1))//如果想要选择的单位处于未选中状态，且角色队伍等于当前队伍,且角色队伍是可以选中的队伍，即主角或召唤物
@@ -1068,6 +1064,53 @@ public class tileMapScript : MonoBehaviour
         }
         return false;
     }
+
+    //检查当前地图所有可移动节点是否可以连通,不知道为什么暂时用不来，再说
+    //找到地图中所有的点，存一个表，只要这个点是障碍物或者周围四格任意一个在列表中的点不是障碍物，那么就把它在表中删掉，否则就返回false
+    public bool MapIsFullyAccessible()
+    {
+        List<Node> temlist = new List<Node>();
+        bool[,] mapFlags = new bool[mapSizeX, mapSizeY];//一个标记，true时表示该点可以通行
+
+
+        foreach (Node n in graph)
+        {
+            temlist.Add(n);//存进临时表
+        }
+
+
+        for (int i = 0; i < temlist.Count ; i++)//对于全地图节点遍历获取位置
+        {
+            int temx = temlist[i].x;
+            int temy = temlist[i].y;
+
+            if (tiles[temx, temy] == 3 )//如果这个点就是障碍物
+            {
+                temlist.RemoveAt(i);
+                mapFlags[temx, temy] = false;//不可通行
+                continue;
+            }
+            else
+            {
+                foreach (Node n in graph[temx, temy].neighbours)//对于该节点的邻居遍历
+                {
+
+                    if ((temlist.Contains(n) && tiles[n.x, n.y] == 3) || mapFlags[n.x, n.y])//如果列表包含了这个邻居且它不是障碍物，那么在列表中删掉原点，表示这个点可以信任，只要下一次检查邻居是OK的那么这个点也OK。或者这个邻居已经被标记为可通行，也可信任
+                    {
+                        temlist.RemoveAt(i);
+                        break;
+                    }
+
+
+                }
+            }
+
+        }
+
+        return (temlist == null);
+
+    }
+
 
 
 }

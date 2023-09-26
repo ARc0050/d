@@ -28,7 +28,7 @@ public class gameManagerScript : MonoBehaviour
     private Ray ray;
     private RaycastHit hit;
 
-    /// 团队数量被在代码里被定死了是2，如果将来有变化，该类中的一些函数也需要修改，以更新这一变化。
+    /// 团队数量被在代码里被定死了是4，如果将来有变化，该类中的一些函数也需要修改，以更新这一变化。
 
     public int numberOfTeams = 4;
     public int currentTeam;
@@ -72,9 +72,18 @@ public class gameManagerScript : MonoBehaviour
     //该游戏对象用于记录 2 个计数路径的位置，当其重置为 0 时，可用于记住要禁用的tile。
     public GameObject quadThatIsOneAwayFromUnit;
 
-   
+
+    [Header("unit prefabs")]
+    public GameObject playerPrefab;
+    public GameObject enemyPrefab_A;
+
+
+
+
     public void Start()           
     {
+        Player = team1.transform.Find("Player").gameObject;
+        currentunit = Player.transform;
         currentTeam = 0; //重置队伍数
         setCurrentTeamUI(); //激活UI
         teamHealthbarColorUpdate(); // 激活双方单位的血条颜色
@@ -873,6 +882,21 @@ public class gameManagerScript : MonoBehaviour
 
     }
 
-  
-   
+
+
+    //创造Player
+    public void CreatePlayer(Vector3 position)
+    {
+        GameObject PlayerA = Instantiate(playerPrefab, position, Quaternion.identity, team1.transform);
+
+        PlayerA.name = "Player";
+    }
+
+    //创造怪物
+    public void CreateEnemy(Vector3 position)
+    {
+        Instantiate(enemyPrefab_A, position, Quaternion.identity, team3.transform);
+
+    }
+
 }

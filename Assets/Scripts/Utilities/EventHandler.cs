@@ -5,13 +5,22 @@ using UnityEngine;
 
 public static class EventHandler
 {
-    public static event Action<InventoryLocation, List<InventoryDiceEffect>> UpdateInventoryUI;
+    public static event Action<InventoryDiceLocation, List<InventoryDice>> UpdateInventoryDiceUI;
 
-    public static void CallUpdateInventoryUI(InventoryLocation location, List<InventoryDiceEffect> list)
+    public static void CallUpdateInventoryDiceUI(InventoryDiceLocation location, List<InventoryDice> list)
     {
-        UpdateInventoryUI?.Invoke(location, list);//用list刷新location的内容,比如用A的列表数据赋予A的UI显示
+        UpdateInventoryDiceUI?.Invoke(location, list);//用list刷新location的内容,比如用A的列表数据赋予A的UI显示,这是骰子的
 
     }
+
+    public static event Action<InventoryEffectLocation, List<InventoryDiceEffect>> UpdateInventoryDiceEffectUI;
+
+    public static void CallUpdateInventoryDiceEffectUI(InventoryEffectLocation location, List<InventoryDiceEffect> list)
+    {
+        UpdateInventoryDiceEffectUI?.Invoke(location, list);//用list刷新location的内容,比如用A的列表数据赋予A的UI显示，这是效果的
+
+    }
+
 
     //public static event Action<int, Vector3> InstantiateItemInScene;
 
